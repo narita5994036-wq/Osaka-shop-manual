@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "FILE=$(jq -r '.tool_input.file_path // .tool_response.filePath' 2>/dev/null); if [ -n \"$FILE\" ] && [ \"$FILE\" != \"null\" ]; then cd /home/user/Osaka-shop-manual && git add -A && git diff --cached --quiet || git commit -m \"Auto-commit: edit ${FILE##*/}\" && git push -u origin claude/auto-merge-commits-rqQDG; fi 2>/dev/null || true",
+            "statusMessage": "変更を自動コミット&プッシュ中..."
+          }
+        ]
+      }
+    ]
+  }
+}
