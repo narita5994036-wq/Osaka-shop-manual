@@ -1,0 +1,1 @@
+# Osaka-shop-manual
