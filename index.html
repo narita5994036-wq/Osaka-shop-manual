@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MYKITA Osaka Shop Manual</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { color-scheme: light only; }
+  html { background: white; }
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: white !important;
+    min-height: 100vh;
+    color: #1a1a1a !important;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* ---- HEADER ---- */
+  header {
+    background: white;
+    border-bottom: 1px solid #e0e0e0;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+  }
+  .header-left { display: flex; align-items: center; gap: 12px; }
+  .brand {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+  }
+  .header-divider { width: 1px; height: 14px; background: #ddd; }
+  .header-sub {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 300;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: #888;
+    text-transform: uppercase;
+  }
+  .btn-edit {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border: 1px solid #1a1a1a;
+    background: none;
+    color: #1a1a1a;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .btn-edit.active { background: #1a1a1a; color: white; }
+
+  /* ---- HAMBURGER ---- */
+  .btn-menu {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    flex-direction: column;
+    gap: 5px;
+    flex-shrink: 0;
+  }
+  .btn-menu span {
+    display: block;
+    width: 22px;
+    height: 1.5px;
+    background: #1a1a1a;
+    transition: all 0.2s;
+  }
+
+  /* ---- LAYOUT ---- */
+  .layout { display: flex; min-height: calc(100vh - 56px); background: white; }
+
+  /* ---- SIDEBAR ---- */
+  nav {
+    width: 220px;
+    flex-shrink: 0;
+    background: white;
+    border-right: 1px solid #e0e0e0;
+    padding: 28px 0;
+    position: sticky;
+    top: 56px;
+    height: calc(100vh - 56px);
+    overflow-y: auto;
+  }
+  .nav-label {
+    padding: 0 20px 16px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    color: #bbb;
+    text-transform: uppercase;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    padding: 13px 20px;
+    background: none;
+    border: none;
+    border-left: 2px solid transparent;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s;
+  }
+  .nav-item.active { border-left-color: #1a1a1a; }
+  .nav-num {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 300;
+    font-size: 10px;
+    color: #bbb;
+    letter-spacing: 0.1em;
+    min-width: 16px;
+    transition: color 0.15s;
+    flex-shrink: 0;
+  }
+  .nav-item.active .nav-num { color: #1a1a1a; }
+  .nav-title {
+    font-size: 13px;
+    font-weight: 300;
+    color: #555;
+    letter-spacing: 0.04em;
+    margin-bottom: 2px;
+    transition: all 0.15s;
+  }
+  .nav-item.active .nav-title { font-weight: 400; color: #1a1a1a; }
+  .nav-subtitle {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: #bbb;
+    text-transform: uppercase;
+  }
+
+  /* ---- MAIN ---- */
+  main {
+    flex: 1;
+    padding: 32px 24px;
+    max-width: 720px;
+    min-width: 0;
+    background: white;
+  }
+  .topic-header {
+    margin-bottom: 28px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    background: white;
+  }
+  .topic-eyebrow {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 300;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: #bbb;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .topic-title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 300;
+    font-size: 24px;
+    letter-spacing: 0.07em;
+    color: #1a1a1a;
+  }
+  .btn-learn {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 8px 18px;
+    border: 1px solid #1a1a1a;
+    background: none;
+    color: #1a1a1a;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .btn-learn.active { background: #1a1a1a; color: white; }
+
+  /* ---- LEARN MODE ---- */
+  .learn-box {
+    background: white;
+    border: 1px solid #e0e0e0;
+    padding: 28px;
+    margin-bottom: 24px;
+  }
+  .learn-meta {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: #bbb;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .learn-title {
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: 0.03em;
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+  .learn-detail {
+    font-size: 13px;
+    color: #555;
+    line-height: 2;
+    font-weight: 300;
+    margin-bottom: 28px;
+  }
+  .learn-nav { display: flex; gap: 10px; align-items: center; }
+  .learn-progress-wrap { flex: 1; height: 1px; background: #f0f0f0; }
+  .learn-progress-bar { height: 100%; background: #1a1a1a; transition: width 0.3s; }
+  .btn-prev, .btn-next {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    padding: 8px 16px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .btn-prev { background: none; border: 1px solid #ddd; color: #555; }
+  .btn-prev:disabled { color: #ccc; border-color: #eee; cursor: default; }
+  .btn-next { background: #1a1a1a; border: none; color: white; }
+
+  /* ---- EDIT HINT ---- */
+  .edit-hint {
+    padding: 9px 14px;
+    background: #fafafa;
+    border: 1px dashed #ddd;
+    margin-bottom: 2px;
+    font-size: 11px;
+    color: #bbb;
+    letter-spacing: 0.07em;
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  /* ---- STEPS ---- */
+  .steps-list { background: white; border: 1px solid #e0e0e0; }
+  .step-card {
+    display: flex;
+    gap: 12px;
+    padding: 18px 20px;
+    border-bottom: 1px solid #e8e8e8;
+    background: white;
+    transition: background 0.15s, opacity 0.15s;
+    align-items: flex-start;
+  }
+  .step-card:last-child { border-bottom: none; }
+  .step-card.dragging { opacity: 0.35; }
+  .step-card.drag-over { background: #f5f5f5; }
+  .drag-handle {
+    display: flex;
+    align-items: flex-start;
+    padding-top: 2px;
+    color: #ccc;
+    font-size: 16px;
+    cursor: grab;
+    user-select: none;
+    flex-shrink: 0;
+  }
+  .step-num {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 300;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: #999;
+    padding-top: 3px;
+    flex-shrink: 0;
+    width: 20px;
+    text-align: right;
+  }
+  .step-body { flex: 1; min-width: 0; }
+  .step-title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: #1a1a1a;
+    margin-bottom: 6px;
+    line-height: 1.4;
+  }
+  .step-detail {
+    font-size: 12px;
+    color: #666;
+    line-height: 1.85;
+    font-weight: 300;
+  }
+  .step-actions {
+    display: flex;
+    gap: 6px;
+    align-items: flex-start;
+    flex-shrink: 0;
+    flex-direction: column;
+  }
+  .btn-step-edit, .btn-step-del {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    padding: 4px 10px;
+    cursor: pointer;
+    background: none;
+    white-space: nowrap;
+  }
+  .btn-step-edit { border: 1px solid #ccc; color: #555; }
+  .btn-step-del { border: 1px solid #e0a0a0; color: #c06060; }
+  .btn-add-step {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 16px;
+    background: none;
+    border: none;
+    border-top: 1px solid #e8e8e8;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: #aaa;
+    text-transform: uppercase;
+    transition: color 0.15s;
+  }
+  .btn-add-step:hover { color: #555; }
+
+  /* ---- MODAL ---- */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 16px;
+  }
+  .modal {
+    background: white;
+    width: 100%;
+    max-width: 480px;
+    padding: 32px 28px;
+    box-shadow: 0 4px 40px rgba(0,0,0,0.12);
+  }
+  .modal-label-top {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 300;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: #999;
+    margin-bottom: 24px;
+    text-transform: uppercase;
+  }
+  .field { margin-bottom: 20px; }
+  .field-label {
+    display: block;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: #aaa;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .field input, .field textarea {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid #ddd;
+    padding: 8px 0;
+    font-size: 14px;
+    font-family: 'Noto Sans JP', sans-serif;
+    outline: none;
+    resize: none;
+    line-height: 1.8;
+    background: transparent;
+    -webkit-appearance: none;
+    border-radius: 0;
+  }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 28px; }
+  .btn-cancel {
+    background: none;
+    border: 1px solid #ddd;
+    padding: 10px 20px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    color: #888;
+  }
+  .btn-save {
+    background: #1a1a1a;
+    border: none;
+    padding: 10px 20px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    color: white;
+  }
+
+  /* ---- MOBILE ---- */
+  @media (max-width: 640px) {
+    .btn-menu { display: flex; }
+    .header-sub { display: none; }
+
+    nav {
+      position: fixed;
+      top: 56px;
+      left: 0;
+      width: 78vw;
+      max-width: 280px;
+      height: calc(100vh - 56px);
+      z-index: 150;
+      box-shadow: 4px 0 24px rgba(0,0,0,0.1);
+      transform: translateX(-100%);
+      transition: transform 0.25s ease;
+    }
+    nav.open { transform: translateX(0); }
+
+    main { padding: 20px 14px; }
+    .topic-title { font-size: 20px; }
+    .learn-box { padding: 20px 16px; }
+    .learn-title { font-size: 16px; }
+    .step-card { padding: 16px 14px; gap: 10px; }
+    .step-title { font-size: 12px; }
+    .step-detail { font-size: 11px; }
+    .step-actions { flex-direction: row; }
+    .modal { padding: 24px 18px; }
+  }
+
+  /* ---- MORNING GRID ---- */
+  .morning-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: #e0e0e0;
+    border: 1px solid #e0e0e0;
+  }
+  .morning-card {
+    background: white;
+    padding: 24px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    transition: background 0.15s, opacity 0.15s;
+    position: relative;
+  }
+  .morning-card.dragging { opacity: 0.35; }
+  .morning-card.drag-over { background: #f5f5f5; }
+  .morning-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+  .morning-step-num {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 300;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: #ccc;
+  }
+  .morning-drag-handle {
+    color: #ccc;
+    font-size: 15px;
+    cursor: grab;
+    user-select: none;
+  }
+  .morning-illus {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 0 4px;
+  }
+  .morning-illus svg {
+    width: 72px;
+    height: 72px;
+    stroke: #1a1a1a;
+    stroke-width: 1.4;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .morning-card-title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: #1a1a1a;
+    line-height: 1.4;
+  }
+  .morning-card-detail {
+    font-size: 11px;
+    color: #777;
+    line-height: 1.9;
+    font-weight: 300;
+    flex: 1;
+  }
+  .morning-card-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  @media (max-width: 480px) {
+    .morning-grid { grid-template-columns: 1fr; }
+    .morning-card { padding: 18px 16px 16px; }
+    .morning-illus svg { width: 60px; height: 60px; }
+  }
+  .btn-add-morning {
+    grid-column: 1 / -1;
+    background: white;
+    border: none;
+    border-top: 1px solid #e8e8e8;
+    padding: 16px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: #aaa;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+  .btn-add-morning:hover { color: #555; }
+
+  /* ---- NAV OVERLAY ---- */
+  .nav-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    top: 56px;
+    background: rgba(0,0,0,0.22);
+    z-index: 140;
+  }
+  .nav-overlay.open { display: block; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <button class="btn-menu" id="btnMenu" onclick="toggleNav()" aria-label="メニュー">
+      <span></span><span></span><span></span>
+    </button>
+    <span class="brand">MYKITA</span>
+    <div class="header-divider"></div>
+    <span class="header-sub">Osaka Shop Manual</span>
+  </div>
+  <button class="btn-edit" id="btnEdit" onclick="toggleEdit()">Edit</button>
+</header>
+
+<div class="nav-overlay" id="navOverlay" onclick="closeNav()"></div>
+
+<div class="layout">
+  <nav id="sideNav">
+    <div class="nav-label">Topics</div>
+    <div id="navList"></div>
+  </nav>
+  <main id="mainContent"></main>
+</div>
+
+<div class="modal-overlay" id="modal" style="display:none;">
+  <div class="modal">
+    <div class="modal-label-top" id="modalLabel">Edit Step</div>
+    <div class="field">
+      <label class="field-label">Title</label>
+      <input type="text" id="modalTitle" placeholder="業務手順のタイトル">
+    </div>
+    <div class="field">
+      <label class="field-label">Detail</label>
+      <textarea id="modalDetail" rows="4" placeholder="詳細な手順を入力..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">CANCEL</button>
+      <button class="btn-save" onclick="saveStep()">SAVE</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DEFAULT_DATA = {
+  topics: [
+    {
+      id: "morning", title: "朝番・開店準備", subtitle: "Morning Shift",
+      steps: [
+        { id: "m1", title: "レジ金を3階現金センターへ", detail: "鍵番号：120\nロッカーからポーチごと取り出し、店舗へ。" },
+        { id: "m2", title: "釣り銭の確認", detail: "釣り銭が70,000円あるか確認する。" },
+        { id: "m3", title: "レジに釣り銭をセット", detail: "解除はエアレジアプリから行う。\n・札 → すべてセット\n・硬貨 → 各種5枚ずつセット\n・収入印紙 → すべてセット" },
+        { id: "m4", title: "ディスプレイモニター起動", detail: "店内のディスプレイモニターの電源を入れ、正常に表示されているか確認する。" },
+        { id: "m5", title: "給水タンクの水入れ替え", detail: "検眼室の給水タンクの水を新しい水に入れ替える。タンクの1/4くらいを目安に水を入れる。\n排水タンクの方に水が溜まっていたら水ですすいでから捨てる。" },
+        { id: "m6", title: "カーペット清掃", detail: "粘着クリーナーを使用してカーペットを清掃する。片付ける前に粘着シートはめくって新しくしておく。" },
+        { id: "mmirror", title: "ミラー清掃", detail: "ガラスクリーナーをミラーに吹き付け、セリートで拭き取る。" },
+        { id: "m7", title: "ウォールラック清掃", detail: "モップを使い、最上段を水平方向に進みながら拭いていく。1段終わったら次の段へ移り、同じく水平方向に進みながら拭く。" },
+        { id: "m8", title: "BGMの再生", detail: "iPhoneでラジオを再生する。" },
+      ]
+    },
+    {
+      id: "register", title: "レジ操作", subtitle: "Register Operations",
+      steps: [
+        { id: "r1", title: "スマレジの起動・ログイン", detail: "iPadのスマレジアプリを起動 → 担当者IDでログイン → 前日の売上サマリーを確認。" },
+        { id: "r2", title: "カード決済（基本フロー）", detail: "① スマレジで商品を登録・金額確認\n② 「カード」を選択\n③ お客様にカードリーダーを向ける\n④ タッチ決済 or 挿入 → 承認を確認\n⑤ レシートをメールまたは印刷で発行" },
+        { id: "r3", title: "タッチ決済（非接触）", detail: "カードリーダーに「かざしてください」と案内。\nSuica・iD・QUICPay・Visaタッチなど対応。\n承認音を確認してから次の操作へ進む。" },
+        { id: "r4", title: "現金決済（補足）", detail: "① スマレジで「現金」を選択\n② 受け取り金額を入力 → お釣り表示を確認\n③ お釣りを渡してレシート発行\n※現金は補助的な扱い。釣り銭不足に注意。" },
+        { id: "r5", title: "返品・返金の処理", detail: "① スマレジの取引履歴から対象レシートを検索\n② 「返品」を選択 → 商品・金額を確認\n③ 管理者の承認を得る\n④ 元の決済手段で返金（カード→カード、現金→現金）" },
+        { id: "r6", title: "領収書の発行", detail: "① 取引完了後にスマレジの領収書ボタンを選択\n② 宛名を確認して印刷\n③ 但し書きは「メガネ代として」が基本" },
+        { id: "r7", title: "日次締め・レポート確認", detail: "① スマレジで「締め処理」を実行\n② カード・現金・合計の売上を確認\n③ 現金は手元の金額と照合し、差異があれば管理者に報告\n④ スマレジのレポート画面をスクリーンショットして保存" },
+      ]
+    },
+    {
+      id: "register-help", title: "レジヘルプ", subtitle: "Register Troubleshooting",
+      steps: [
+        { id: "rh1", title: "カード決済が通らない", detail: "① カードの挿入・タッチ向きを確認\n② Wi-Fi・回線状態を確認\n③ カードリーダーを再起動（10秒押し）\n④ 別のカード・決済方法を提案\n⑤ 改善しない場合は管理者へ連絡" },
+        { id: "rh2", title: "スマレジが固まった／動かない", detail: "① そのまま30秒待つ（処理中の場合あり）\n② 改善しない場合はアプリを強制終了→再起動\n③ iPad自体を再起動する場合は管理者に連絡してから実施\n④ 再ログイン後、直前の取引状態を確認" },
+        { id: "rh3", title: "金額の入力ミスをした", detail: "① 決済前なら商品を削除して入力し直す\n② 決済完了後は「返品」処理で取り消し\n③ 管理者の承認を得た上で正しい金額で再決済\n④ スマレジの取引メモに経緯を記録" },
+        { id: "rh4", title: "レシートが印刷されない", detail: "① プリンターの用紙切れを確認 → 補充\n② 用紙の向き確認（印字面が内側）\n③ Bluetooth接続が切れていないか確認\n④ スマレジでレシートメール送信を代替案として提案" },
+        { id: "rh5", title: "タッチ決済が反応しない", detail: "① カードリーダーの接触面を清掃\n② カードを少し離してから再度かざす\n③ 「挿入」での決済に切り替えを案内\n④ 別カードや現金での対応も提案する" },
+        { id: "rh6", title: "売上集計が合わない", detail: "① スマレジのレポート画面で取引一覧を確認\n② キャンセル・返品の件数を再確認\n③ 現金は手元の金額と照合\n④ 差異が解消しない場合は管理者へ報告し、自己判断で調整しない" },
+      ]
+    },
+    {
+      id: "eye-exam", title: "検眼", subtitle: "Eye Examination",
+      steps: [
+        { id: "e1", title: "問診・現在の度数確認", detail: "現在使用中のメガネを確認。最終検眼日・見え方の不満・生活環境をヒアリング。" },
+        { id: "e2", title: "他覚的屈折検査", detail: "オートレフで客観的な屈折値を測定。測定値を記録し、次のステップの参考値にする。" },
+        { id: "e3", title: "自覚的屈折検査", detail: "検眼レンズを使用し、お客様の見え方を確認しながら度数を調整。遠方・近方・乱視を確認。" },
+        { id: "e4", title: "両眼視機能の確認", detail: "プリズム検査・輻輳・開散のチェック。バランステスト実施。" },
+        { id: "e5", title: "処方値の決定とフレーム提案", detail: "最終処方値を決定 → お客様に説明 → 処方値に適したフレーム・レンズを提案。" },
+        { id: "e6", title: "オーダーシートの記入", detail: "処方値・PD・フレーム情報・レンズ種別を正確に記入。お客様サインをいただく。" },
+      ]
+    },
+    {
+      id: "shipping", title: "発送・着荷品", subtitle: "Shipping & Arrivals",
+      steps: [
+        { id: "s1", title: "着荷品の受け取り・確認", detail: "伝票と照合しながら商品数を確認。破損がないかチェック。受領印を押す。" },
+        { id: "s2", title: "在庫システムへの入力", detail: "着荷品をシステムに入力。品番・カラー・数量を正確に登録。" },
+        { id: "s3", title: "商品の値付け・陳列", detail: "価格タグを確認し、正しい棚・ディスプレイに陳列。前出し陳列を心がける。" },
+        { id: "s4", title: "発送準備", detail: "梱包資材の選定 → 商品を丁寧に梱包 → 送り状の記入・貼付 → 発送記録を記入。" },
+        { id: "s5", title: "発送後の追跡管理", detail: "追跡番号を記録。お客様に発送連絡を送付。到着確認まで追跡。" },
+      ]
+    },
+    {
+      id: "open-close", title: "開店・閉店準備", subtitle: "Opening & Closing",
+      steps: [
+        { id: "oc1", title: "開店準備チェックリスト", detail: "店内清掃 → ディスプレイ整備 → レジ準備 → 在庫確認 → 照明ON → サイン表示。" },
+        { id: "oc2", title: "ディスプレイの整え", detail: "前日終了時の状態から、商品の向き・間隔を整える。欠品があれば補充。" },
+        { id: "oc3", title: "スタッフミーティング", detail: "当日の予約確認 → 前日の引き継ぎ事項共有 → 目標・注意事項の確認。" },
+        { id: "oc4", title: "閉店前の在庫確認", detail: "陳列商品の数を確認。不足品・破損品のチェックと記録。翌日の発注確認。" },
+        { id: "oc5", title: "閉店作業", detail: "清掃 → レジ締め → セキュリティ設定 → 消灯確認 → 施錠。" },
+      ]
+    },
+  ]
+};
+
+const NUMS = { "morning":"01","register":"02","register-help":"03","eye-exam":"04","shipping":"05","open-close":"06" };
+
+let data = (() => { try { const s = localStorage.getItem("mykita-manual-v5"); return s ? JSON.parse(s) : DEFAULT_DATA; } catch { return DEFAULT_DATA; } })();
+let activeId = "morning";
+let isEditMode = false;
+let learnIndex = null;
+let dragSrcIdx = null;
+let modalMode = null;
+let editingStepId = null;
+
+function save() { localStorage.setItem("mykita-manual-v5", JSON.stringify(data)); }
+function topic() { return data.topics.find(t => t.id === activeId); }
+function uid() { return "s" + Date.now() + Math.random().toString(36).slice(2,6); }
+function esc(s) {
+  return String(s||"")
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+    .replace(/\n/g,"<br>");
+}
+
+function toggleNav() {
+  document.getElementById("sideNav").classList.toggle("open");
+  document.getElementById("navOverlay").classList.toggle("open");
+}
+function closeNav() {
+  document.getElementById("sideNav").classList.remove("open");
+  document.getElementById("navOverlay").classList.remove("open");
+}
+
+function render() { renderNav(); renderMain(); }
+
+function renderNav() {
+  const nav = document.getElementById("navList");
+  nav.innerHTML = "";
+  data.topics.forEach(t => {
+    const btn = document.createElement("button");
+    btn.className = "nav-item" + (t.id === activeId ? " active" : "");
+    btn.innerHTML = `
+      <span class="nav-num">${NUMS[t.id]||"—"}</span>
+      <div>
+        <div class="nav-title">${t.title}</div>
+        <div class="nav-subtitle">${t.subtitle}</div>
+      </div>`;
+    btn.onclick = () => { activeId = t.id; learnIndex = null; closeNav(); render(); };
+    nav.appendChild(btn);
+  });
+}
+
+function renderMain() {
+  const t = topic();
+  const main = document.getElementById("mainContent");
+
+  let learnHtml = "";
+  if (!isEditMode && learnIndex !== null && t.steps.length > 0) {
+    const step = t.steps[learnIndex];
+    const pct = Math.round(((learnIndex+1) / t.steps.length) * 100);
+    learnHtml = `
+      <div class="learn-box">
+        <div class="learn-meta">Step ${learnIndex+1} of ${t.steps.length}</div>
+        <div class="learn-title">${esc(step.title)}</div>
+        <div class="learn-detail">${esc(step.detail)}</div>
+        <div class="learn-nav">
+          <button class="btn-prev" ${learnIndex===0?"disabled":""} onclick="learnPrev()">← PREV</button>
+          <div class="learn-progress-wrap"><div class="learn-progress-bar" style="width:${pct}%"></div></div>
+          ${learnIndex < t.steps.length-1
+            ? `<button class="btn-next" onclick="learnNext()">NEXT →</button>`
+            : `<button class="btn-next" onclick="learnDone()">COMPLETE ✓</button>`}
+        </div>
+      </div>`;
+  }
+
+  const editHint = isEditMode ? `<div class="edit-hint">⠿ ドラッグで並び替え可能</div>` : "";
+
+  let stepsHtml;
+  if (t.id === "morning") {
+    const cards = t.steps.map((s,i) => renderMorningCard(s,i)).join("");
+    const addBtn = isEditMode ? `<button class="btn-add-morning" onclick="openNew()">+ Add Step</button>` : "";
+    stepsHtml = `<div class="morning-grid" id="stepsList">${cards}${addBtn}</div>`;
+  } else {
+    stepsHtml = `<div class="steps-list" id="stepsList">` +
+      t.steps.map((s,i) => renderStep(s,i)).join("") +
+      (isEditMode ? `<button class="btn-add-step" onclick="openNew()">+ Add Step</button>` : "") +
+      `</div>`;
+  }
+
+  const learnBtn = !isEditMode && t.steps.length > 0
+    ? `<button class="btn-learn ${learnIndex!==null?'active':''}" onclick="toggleLearn()">
+        ${learnIndex!==null ? '× Exit' : '▷ Learn'}
+       </button>` : "";
+
+  main.innerHTML = `
+    <div class="topic-header">
+      <div>
+        <div class="topic-eyebrow">${NUMS[t.id]||""} — ${t.subtitle}</div>
+        <h1 class="topic-title">${t.title}</h1>
+      </div>
+      ${learnBtn}
+    </div>
+    ${learnHtml}
+    ${editHint}
+    ${stepsHtml}`;
+
+  attachDrag();
+}
+
+const MORNING_SVG = {
+  m1: `<svg viewBox="0 0 72 72">
+    <!-- key -->
+    <circle cx="22" cy="30" r="10"/>
+    <line x1="30" y1="30" x2="56" y2="30"/>
+    <line x1="50" y1="30" x2="50" y2="37"/>
+    <line x1="56" y1="30" x2="56" y2="37"/>
+    <!-- up arrow -->
+    <polyline points="44,14 52,6 60,14"/>
+    <line x1="52" y1="6" x2="52" y2="22"/>
+  </svg>`,
+  m2: `<svg viewBox="0 0 72 72">
+    <!-- bill -->
+    <rect x="10" y="20" width="52" height="28" rx="2"/>
+    <circle cx="36" cy="34" r="8"/>
+    <line x1="36" y1="28" x2="36" y2="40"/>
+    <line x1="30" y1="33" x2="42" y2="33"/>
+    <!-- checkmark -->
+    <polyline points="46,8 52,14 64,2" stroke-width="2"/>
+  </svg>`,
+  m3: `<svg viewBox="0 0 72 72">
+    <!-- register body -->
+    <rect x="10" y="22" width="52" height="36" rx="2"/>
+    <!-- screen -->
+    <rect x="16" y="28" width="28" height="16" rx="1"/>
+    <!-- keys -->
+    <rect x="48" y="28" width="8" height="6" rx="1"/>
+    <rect x="48" y="37" width="8" height="6" rx="1"/>
+    <!-- drawer -->
+    <line x1="10" y1="46" x2="62" y2="46"/>
+    <line x1="36" y1="46" x2="36" y2="58"/>
+    <!-- display stand line -->
+    <line x1="14" y1="22" x2="14" y2="14"/>
+    <line x1="14" y1="14" x2="32" y2="14"/>
+    <text x="16" y="21" font-size="6" stroke="none" fill="#1a1a1a" font-family="Montserrat,sans-serif" letter-spacing="0.5">¥</text>
+  </svg>`,
+  m4: `<svg viewBox="0 0 72 72">
+    <!-- monitor -->
+    <rect x="8" y="12" width="56" height="36" rx="2"/>
+    <!-- screen inner -->
+    <rect x="14" y="18" width="44" height="24" rx="1"/>
+    <!-- stand -->
+    <line x1="36" y1="48" x2="36" y2="58"/>
+    <line x1="26" y1="58" x2="46" y2="58"/>
+    <!-- power symbol -->
+    <path d="M33,24 A8,8 0 1,0 39,24"/>
+    <line x1="36" y1="20" x2="36" y2="28"/>
+  </svg>`,
+  m5: `<svg viewBox="0 0 72 72">
+    <!-- jug body -->
+    <path d="M22,16 L22,56 Q22,60 26,60 L46,60 Q50,60 50,56 L50,16 Z"/>
+    <!-- handle -->
+    <path d="M50,24 Q62,24 62,36 Q62,48 50,48"/>
+    <!-- cap -->
+    <rect x="28" y="10" width="16" height="8" rx="2"/>
+    <!-- water waves inside -->
+    <path d="M28,40 Q31,36 34,40 Q37,44 40,40 Q43,36 46,40" stroke-width="1.2"/>
+    <path d="M28,48 Q31,44 34,48 Q37,52 40,48 Q43,44 46,48" stroke-width="1.2"/>
+  </svg>`,
+  m6: `<svg viewBox="0 0 72 72">
+    <!-- roller body -->
+    <rect x="22" y="28" width="34" height="20" rx="10"/>
+    <!-- handle -->
+    <line x1="39" y1="18" x2="52" y2="8"/>
+    <line x1="39" y1="28" x2="39" y2="18"/>
+    <!-- texture lines -->
+    <line x1="30" y1="28" x2="30" y2="48" stroke-width="0.8" stroke-dasharray="2,3"/>
+    <line x1="38" y1="28" x2="38" y2="48" stroke-width="0.8" stroke-dasharray="2,3"/>
+    <line x1="46" y1="28" x2="46" y2="48" stroke-width="0.8" stroke-dasharray="2,3"/>
+    <!-- arrow direction -->
+    <polyline points="12,44 20,38 20,50" stroke-width="1.2"/>
+  </svg>`,
+  m7: `<svg viewBox="0 0 80 80">
+    <!-- wall (left vertical) -->
+    <line x1="6" y1="8" x2="6" y2="72"/>
+    <!-- shelf 1 (top) -->
+    <line x1="6" y1="18" x2="58" y2="18"/>
+    <!-- shelf 2 -->
+    <line x1="6" y1="36" x2="58" y2="36"/>
+    <!-- shelf 3 -->
+    <line x1="6" y1="54" x2="58" y2="54"/>
+    <!-- shelf 4 (bottom) -->
+    <line x1="6" y1="70" x2="58" y2="70"/>
+
+    <!-- row1: left→right arrow on top shelf -->
+    <line x1="10" y1="27" x2="50" y2="27" stroke-dasharray="3,2"/>
+    <polyline points="44,23 50,27 44,31"/>
+
+    <!-- drop arrow: right side down to row2 -->
+    <line x1="54" y1="27" x2="54" y2="44" stroke-dasharray="2,2"/>
+    <polyline points="50,40 54,45 58,40"/>
+
+    <!-- row2: left→right arrow -->
+    <line x1="10" y1="45" x2="50" y2="45" stroke-dasharray="3,2"/>
+    <polyline points="44,41 50,45 44,49"/>
+
+    <!-- drop arrow: right side down to row3 -->
+    <line x1="54" y1="46" x2="54" y2="62" stroke-dasharray="2,2"/>
+    <polyline points="50,58 54,63 58,58"/>
+
+    <!-- row3: left→right arrow -->
+    <line x1="10" y1="63" x2="50" y2="63" stroke-dasharray="3,2"/>
+    <polyline points="44,59 50,63 44,67"/>
+  </svg>`,
+  mmirror: `<svg viewBox="0 0 72 72">
+    <!-- mirror frame -->
+    <rect x="16" y="8" width="40" height="44" rx="2"/>
+    <!-- reflection shine lines -->
+    <line x1="24" y1="16" x2="24" y2="44" stroke-width="0.8" opacity="0.5"/>
+    <line x1="30" y1="16" x2="30" y2="44" stroke-width="0.8" opacity="0.5"/>
+    <!-- spray bottle -->
+    <rect x="6" y="46" width="10" height="16" rx="2"/>
+    <path d="M16,50 L22,46 L26,46"/>
+    <line x1="22" y1="46" x2="22" y2="54"/>
+    <circle cx="24" cy="55" r="1.5" fill="#1a1a1a" stroke="none"/>
+    <!-- spray dots -->
+    <circle cx="30" cy="44" r="1" fill="#1a1a1a" stroke="none"/>
+    <circle cx="33" cy="40" r="1" fill="#1a1a1a" stroke="none"/>
+    <circle cx="29" cy="38" r="1" fill="#1a1a1a" stroke="none"/>
+    <circle cx="35" cy="46" r="1" fill="#1a1a1a" stroke="none"/>
+    <!-- wiping cloth (serviette) with motion arc -->
+    <rect x="40" y="30" width="20" height="12" rx="3"/>
+    <path d="M42,26 Q50,22 58,26" stroke-width="1.2"/>
+    <!-- wipe arrow -->
+    <path d="M42,36 Q50,42 58,36" stroke-width="1" stroke-dasharray="2,2"/>
+    <polyline points="54,34 58,36 56,40" stroke-width="1.2"/>
+  </svg>`,
+  m8: `<svg viewBox="0 0 72 72">
+    <!-- phone outline -->
+    <rect x="20" y="10" width="28" height="48" rx="4"/>
+    <line x1="20" y1="18" x2="48" y2="18"/>
+    <line x1="20" y1="52" x2="48" y2="52"/>
+    <circle cx="34" cy="56" r="2"/>
+    <!-- music notes -->
+    <path d="M30,30 L30,40 Q28,42 26,41 Q24,40 25,38 Q26,36 28,37 Q30,38 30,40"/>
+    <path d="M40,26 L40,36 Q38,38 36,37 Q34,36 35,34 Q36,32 38,33 Q40,34 40,36"/>
+    <line x1="30" y1="30" x2="40" y2="26"/>
+    <!-- radio waves -->
+    <path d="M52,28 Q58,34 52,40" stroke-width="1.2"/>
+    <path d="M56,24 Q65,34 56,44" stroke-width="1.2"/>
+  </svg>`,
+};
+
+function renderMorningCard(step, i) {
+  const svg = MORNING_SVG[step.id] || `<svg viewBox="0 0 72 72"><circle cx="36" cy="36" r="20"/></svg>`;
+  const handle = isEditMode ? `<div class="morning-drag-handle">⠿</div>` : `<div></div>`;
+  const actions = isEditMode ? `
+    <div class="morning-card-actions">
+      <button class="btn-step-edit" onclick="openEdit('${step.id}')">EDIT</button>
+      <button class="btn-step-del" onclick="deleteStep('${step.id}')">×</button>
+    </div>` : "";
+  return `
+    <div class="morning-card step-card" data-idx="${i}">
+      <div class="morning-card-top">
+        <span class="morning-step-num">${String(i+1).padStart(2,"0")}</span>
+        ${handle}
+      </div>
+      <div class="morning-illus">${svg}</div>
+      <div class="morning-card-title">${esc(step.title)}</div>
+      <div class="morning-card-detail">${esc(step.detail)}</div>
+      ${actions}
+    </div>`;
+}
+
+function renderStep(step, i) {
+  const handle = isEditMode ? `<div class="drag-handle">⠿</div>` : "";
+  const actions = isEditMode ? `
+    <div class="step-actions">
+      <button class="btn-step-edit" onclick="openEdit('${step.id}')">EDIT</button>
+      <button class="btn-step-del" onclick="deleteStep('${step.id}')">×</button>
+    </div>` : "";
+  return `
+    <div class="step-card" data-idx="${i}">
+      ${handle}
+      <div class="step-num">${String(i+1).padStart(2,"0")}</div>
+      <div class="step-body">
+        <div class="step-title">${esc(step.title)}</div>
+        <div class="step-detail">${esc(step.detail)}</div>
+      </div>
+      ${actions}
+    </div>`;
+}
+
+function attachDrag() {
+  if (!isEditMode) return;
+  document.querySelectorAll(".step-card").forEach(card => {
+    const handle = card.querySelector(".drag-handle");
+    if (!handle) return;
+    handle.addEventListener("mousedown", () => card.setAttribute("draggable","true"));
+    card.addEventListener("dragstart", e => {
+      dragSrcIdx = parseInt(card.dataset.idx);
+      card.classList.add("dragging");
+      e.dataTransfer.effectAllowed = "move";
+    });
+    card.addEventListener("dragend", () => {
+      card.classList.remove("dragging");
+      document.querySelectorAll(".step-card").forEach(c => c.classList.remove("drag-over"));
+    });
+    card.addEventListener("dragover", e => {
+      e.preventDefault();
+      document.querySelectorAll(".step-card").forEach(c => c.classList.remove("drag-over"));
+      card.classList.add("drag-over");
+    });
+    card.addEventListener("drop", e => {
+      e.preventDefault();
+      const toIdx = parseInt(card.dataset.idx);
+      if (dragSrcIdx === null || dragSrcIdx === toIdx) return;
+      const t = topic();
+      const steps = [...t.steps];
+      const [moved] = steps.splice(dragSrcIdx, 1);
+      steps.splice(toIdx, 0, moved);
+      t.steps = steps;
+      dragSrcIdx = null;
+      save(); renderMain();
+    });
+  });
+}
+
+function toggleEdit() {
+  isEditMode = !isEditMode; learnIndex = null;
+  const btn = document.getElementById("btnEdit");
+  btn.textContent = isEditMode ? "✓ Done" : "Edit";
+  btn.classList.toggle("active", isEditMode);
+  render();
+}
+function toggleLearn() { learnIndex = learnIndex !== null ? null : 0; renderMain(); }
+function learnNext() { learnIndex = Math.min(topic().steps.length-1, learnIndex+1); renderMain(); }
+function learnPrev() { learnIndex = Math.max(0, learnIndex-1); renderMain(); }
+function learnDone() { learnIndex = null; renderMain(); }
+
+function deleteStep(id) {
+  topic().steps = topic().steps.filter(s => s.id !== id);
+  save(); renderMain();
+}
+function openEdit(id) {
+  const step = topic().steps.find(s => s.id === id);
+  modalMode = "edit"; editingStepId = id;
+  document.getElementById("modalLabel").textContent = "Edit Step";
+  document.getElementById("modalTitle").value = step.title;
+  document.getElementById("modalDetail").value = step.detail;
+  document.getElementById("modal").style.display = "flex";
+}
+function openNew() {
+  modalMode = "new"; editingStepId = null;
+  document.getElementById("modalLabel").textContent = "New Step";
+  document.getElementById("modalTitle").value = "";
+  document.getElementById("modalDetail").value = "";
+  document.getElementById("modal").style.display = "flex";
+  setTimeout(() => document.getElementById("modalTitle").focus(), 50);
+}
+function closeModal() { document.getElementById("modal").style.display = "none"; }
+function saveStep() {
+  const title = document.getElementById("modalTitle").value.trim();
+  const detail = document.getElementById("modalDetail").value.trim();
+  if (!title) return;
+  const t = topic();
+  if (modalMode === "edit") {
+    const step = t.steps.find(s => s.id === editingStepId);
+    if (step) { step.title = title; step.detail = detail; }
+  } else {
+    t.steps.push({ id: uid(), title, detail });
+  }
+  save(); closeModal(); renderMain();
+}
+
+document.getElementById("modal").addEventListener("click", function(e) { if (e.target === this) closeModal(); });
+document.getElementById("modalTitle").addEventListener("keydown", e => {
+  if (e.key === "Enter") { e.preventDefault(); document.getElementById("modalDetail").focus(); }
+});
+
+render();
+</script>
+</body>
+</html>
