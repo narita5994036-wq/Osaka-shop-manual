@@ -661,10 +661,28 @@ const DEFAULT_DATA = {
         { id: "oc5", title: "閉店作業", detail: "清掃 → レジ締め → セキュリティ設定 → 消灯確認 → 施錠。" },
       ]
     },
+    {
+      id: "evening", title: "遅番・閉店作業", subtitle: "Evening Closing",
+      steps: [
+        { id: "ev1", title: "日報下書き（18:30〜）", detail: "PCのテキストエディットに下書きを作成する。\nフレーム合計本数は最後に書く人が修正する。" },
+        { id: "ev2", title: "照明・モニター電源を落とす（20:00〜）", detail: "照明とモニターの電源をOFFにして閉店をアピールする。" },
+        { id: "ev3", title: "ヴィズフィットの電源を切る", detail: "電源ボタンを2回押してOFF。" },
+        { id: "ev4", title: "iPad スマレジ清算", detail: "① 日時処理\n② 点検 → 点検レシート出力\n③ ドロア開く\n④ 清算 → 清算レシート出力" },
+        { id: "ev5", title: "現金照合（紙幣・硬貨カウント）", detail: "清算レシートの純売上と照合して紙幣・硬貨をカウントする。\n※金額が合っていれば現金売上分を提出ファイル（クレサインレシートを入れているやつ）に入れておくとスムーズ。" },
+        { id: "ev6", title: "カード端末清算", detail: "① メールが届いているか確認（既読にしないと清算できない）\n② インプット：清算レシート通りの客数と純売上を入力\n　※純売上に送料は含めない。送料があった場合は −5,000円（税抜）\n③ 完了 → 6枚（3種 × 2組）レシート出力" },
+        { id: "ev7", title: "レシートの整理・綴じ", detail: "最初の3枚：清算レシートと合わせて計4枚を緑の袋（クレジットのサインレシート入れ）へ\n残り3枚：点検レシートとステープルで留め、セロテープで続くように巻く" },
+        { id: "ev8", title: "3F 現金センターへ", detail: "・ポーチは金庫へ\n・❗️罰金あり → 鍵を必ず確認\n・緑ファイルは 2〜5F ポストへ投函" },
+        { id: "ev9", title: "現金引渡し（現金売上があった場合）", detail: "売上金カウント（売上金のみ引渡し）\n① 用紙セット\n② 引渡しボタン\n③ カードスキャン\n④ 現金挿入\n⑤ スタート\n⑥ 印字\n⑦ 完了" },
+        { id: "ev10", title: "PC スマレジ 日報入力・印刷", detail: "① 日時処理\n② 締め状況編集部 > メモ に日報（テキストエディットの下書き）をコピーして更新\n③ 日報印刷\n④ ウィンドウメニュー > ファイル > PDF書き出し\n　保存先フォルダ「日報」\n　ファイル名にタイムスタンプ（例：2026年3月1日 → 01.03.26）" },
+        { id: "ev11", title: "チャットワークで日報を提出", detail: "グループ「DAILY SALES REPORT」に送信\n\nTO [代表]\nお疲れ様です。\n本日の日報をお送りいたします。\nご確認よろしくお願いいたします。\n成田（送信者の名前）\n[ファイル添付] dailyReport\n\n❗️罰金あり → 忘れずに❗️" },
+        { id: "ev12", title: "PARCO 退館処理", detail: "① Wi-Fi を「PARCO STAFF」に接続\n② Safari > ブックマーク の1番左 > ログイン\n③ 退館報告 > 各項目にチェック > 確認\n④ トップから 🟥退勤済 になっていることを確認してから閉じる" },
+        { id: "ev13", title: "iPad・PCを充電して退館", detail: "iPadとPCをそれぞれ充電ケーブルに接続してから退館する。" },
+      ]
+    },
   ]
 };
 
-const NUMS = { "morning":"01","register":"02","register-help":"03","eye-exam":"04","shipping":"05","open-close":"06" };
+const NUMS = { "morning":"01","register":"02","register-help":"03","eye-exam":"04","shipping":"05","open-close":"06","evening":"07" };
 
 let data = (() => { try { const s = localStorage.getItem("mykita-manual-v5"); return s ? JSON.parse(s) : DEFAULT_DATA; } catch { return DEFAULT_DATA; } })();
 let activeId = "morning";
