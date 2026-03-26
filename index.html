@@ -684,7 +684,7 @@ const DEFAULT_DATA = {
 
 const NUMS = { "morning":"01","register":"02","register-help":"03","eye-exam":"04","shipping":"05","open-close":"06","evening":"07" };
 
-let data = (() => { try { const s = localStorage.getItem("mykita-manual-v5"); return s ? JSON.parse(s) : DEFAULT_DATA; } catch { return DEFAULT_DATA; } })();
+let data = (() => { try { const s = localStorage.getItem("mykita-manual-v6"); return s ? JSON.parse(s) : DEFAULT_DATA; } catch { return DEFAULT_DATA; } })();
 let activeId = "morning";
 let isEditMode = false;
 let learnIndex = null;
@@ -692,7 +692,7 @@ let dragSrcIdx = null;
 let modalMode = null;
 let editingStepId = null;
 
-function save() { localStorage.setItem("mykita-manual-v5", JSON.stringify(data)); }
+function save() { localStorage.setItem("mykita-manual-v6", JSON.stringify(data)); }
 function topic() { return data.topics.find(t => t.id === activeId); }
 function uid() { return "s" + Date.now() + Math.random().toString(36).slice(2,6); }
 function esc(s) {
