@@ -686,7 +686,7 @@ const DEFAULT_DATA = {
   ]
 };
 
-const NUMS = { "morning":"01","register":"02","register-help":"03","eye-exam":"04","shipping":"05","daytime":"06","open-close":"07","evening":"08","staff":"09" };
+const NUMS = { "morning":"01","register":"02","register-help":"03","eye-exam":"04","shipping":"05","daytime":"06","evening":"07","staff":"08" };
 
 let data = (() => { try { const s = localStorage.getItem("mykita-manual-v8"); return s ? JSON.parse(s) : DEFAULT_DATA; } catch { return DEFAULT_DATA; } })();
 let activeId = "morning";
