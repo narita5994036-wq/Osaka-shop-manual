@@ -652,6 +652,12 @@ const DEFAULT_DATA = {
       ]
     },
     {
+      id: "daytime", title: "日中業務", subtitle: "Daytime Operations",
+      steps: [
+        { id: "d1", title: "レンズ発注", detail: "" },
+      ]
+    },
+    {
       id: "open-close", title: "開店・閉店準備", subtitle: "Opening & Closing",
       steps: [
         { id: "oc1", title: "開店準備チェックリスト", detail: "店内清掃 → ディスプレイ整備 → レジ準備 → 在庫確認 → 照明ON → サイン表示。" },
@@ -679,12 +685,20 @@ const DEFAULT_DATA = {
         { id: "ev13", title: "iPad・PCを充電して退館", detail: "iPadとPCをそれぞれ充電ケーブルに接続してから退館する。" },
       ]
     },
+    {
+      id: "staff", title: "スタッフリスト", subtitle: "Staff List",
+      steps: [
+        { id: "st1", title: "東京", detail: "フセヤ（マネージャー）\nキヌガサ（サブマネージャー）\nフジタ\nキタハシ\nカガリ\nソウ" },
+        { id: "st2", title: "福岡", detail: "ヤマサキ（マネージャー）\nトミナガ" },
+        { id: "st3", title: "営業", detail: "ヒジカタ\nコウノ\nカワニシ" },
+      ]
+    },
   ]
 };
 
-const NUMS = { "morning":"01","register":"02","register-help":"03","eye-exam":"04","shipping":"05","open-close":"06","evening":"07" };
+const NUMS = { "morning":"01","register":"02","register-help":"03","eye-exam":"04","shipping":"05","daytime":"06","open-close":"07","evening":"08","staff":"09" };
 
-let data = (() => { try { const s = localStorage.getItem("mykita-manual-v6"); return s ? JSON.parse(s) : DEFAULT_DATA; } catch { return DEFAULT_DATA; } })();
+let data = (() => { try { const s = localStorage.getItem("mykita-manual-v8"); return s ? JSON.parse(s) : DEFAULT_DATA; } catch { return DEFAULT_DATA; } })();
 let activeId = "morning";
 let isEditMode = false;
 let learnIndex = null;
@@ -692,7 +706,7 @@ let dragSrcIdx = null;
 let modalMode = null;
 let editingStepId = null;
 
-function save() { localStorage.setItem("mykita-manual-v6", JSON.stringify(data)); }
+function save() { localStorage.setItem("mykita-manual-v8", JSON.stringify(data)); }
 function topic() { return data.topics.find(t => t.id === activeId); }
 function uid() { return "s" + Date.now() + Math.random().toString(36).slice(2,6); }
 function esc(s) {
