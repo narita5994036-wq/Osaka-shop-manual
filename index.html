@@ -810,6 +810,12 @@ function renderNav() {
 
 function renderMain() {
   const t = topic();
+  const fab = document.getElementById("camFab");
+  if (t.id === "inventory") {
+    fab.style.display = "flex";
+    renderInventory(); return;
+  }
+  fab.style.display = "none";
   const main = document.getElementById("mainContent");
 
   let learnHtml = "";
