@@ -616,6 +616,33 @@
   <main id="mainContent"></main>
 </div>
 
+<!-- Camera Modal -->
+<div id="camModal" style="display:none;" class="cam-overlay">
+  <div class="cam-top">
+    <span class="cam-top-title">Frame Scanner</span>
+    <button class="cam-top-close" onclick="closeCam()">×</button>
+  </div>
+  <div class="cam-viewport">
+    <video id="camVideo" playsinline autoplay muted></video>
+    <canvas id="camCanvas"></canvas>
+    <div class="cam-guide-box" id="camGuide"></div>
+  </div>
+  <div class="cam-bottom">
+    <div class="cam-result-txt" id="camResult">—</div>
+    <div class="cam-row">
+      <div class="cam-test-row">
+        <div class="test-sw" id="testSw" onclick="toggleTestMode()"></div>
+        <span>TEST</span>
+      </div>
+      <button class="btn-shutter" id="btnShutter" onclick="captureFrame()"></button>
+      <div class="cam-ocr-lbl" id="ocrLbl"></div>
+    </div>
+  </div>
+</div>
+
+<!-- FAB camera button (shown only in inventory view) -->
+<button class="btn-cam-fab" id="camFab" onclick="openCam()">📷</button>
+
 <div class="modal-overlay" id="modal" style="display:none;">
   <div class="modal">
     <div class="modal-label-top" id="modalLabel">Edit Step</div>
