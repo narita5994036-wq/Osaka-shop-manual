@@ -1151,6 +1151,229 @@ function saveStep() {
 }
 
 document.getElementById("modal").addEventListener("click", function(e) { if (e.target === this) closeModal(); });
+
+// ============================================================
+// INVENTORY (棚卸)
+// ============================================================
+let invItems = [];
+let camStream = null;
+let tWorker = null;
+let isTestMode = false;
+let testIdx = 0;
+const TEST_FRAMES = [
+  { name: "MODELO", color: "C-12 Black" },
+  { name: "MYLON",  color: "C-23 Silver" },
+  { name: "VIVID",  color: "C-40 Gold" },
+];
+
+function loadInv() {
+  try { const s = localStorage.getItem("mykita-inv"); if (s) invItems = JSON.parse(s); } catch {}
+}
+function saveInv() { localStorage.setItem("mykita-inv", JSON.stringify(invItems)); }
+
+function renderInventory() {
+  loadInv();
+  const main = document.getElementById("mainContent");
+  const done = invItems.filter(x => x.checked).length;
+  const total = invItems.length;
+  const pct = total ? Math.round(done / total * 100) : 0;
+
+  const listHtml = total === 0
+    ? `<div class="inv-empty">CSVをインポートしてリストを作成してください</div>`
+    : `<div class="inv-list">${invItems.map((item, i) => `
+        <div class="inv-item ${item.checked ? 'checked' : ''}">
+          <div class="inv-check ${item.checked ? 'on' : ''}" onclick="toggleInvItem(${i})"></div>
+          <div class="inv-name">${esc(item.name)}</div>
+          <div class="inv-color">${esc(item.color)}</div>
+        </div>`).join('')}</div>`;
+
+  main.innerHTML = `
+    <div class="topic-header">
+      <div>
+        <div class="topic-eyebrow">09 — Frame Inventory</div>
+        <h1 class="topic-title">棚卸</h1>
+      </div>
+    </div>
+    <div class="inv-header">
+      <div class="inv-progress">
+        <strong>${done}</strong> / <strong>${total}</strong> 確認済み
+        ${total ? `<span style="color:#bbb;margin-left:10px">${pct}%</span>` : ''}
+      </div>
+      <div class="inv-actions">
+        <label class="btn-inv" style="cursor:pointer">CSV 読み込み
+          <input type="file" accept=".csv,.txt" style="display:none" onchange="importCSV(event)">
+        </label>
+        ${total ? `<button class="btn-inv" onclick="resetInv()">リセット</button>` : ''}
+      </div>
+    </div>
+    ${listHtml}`;
+}
+
+function toggleInvItem(i) {
+  invItems[i].checked = !invItems[i].checked;
+  saveInv(); renderInventory();
+}
+
+function resetInv() {
+  if (!confirm("チェックをすべてリセットしますか？")) return;
+  invItems.forEach(x => x.checked = false);
+  saveInv(); renderInventory();
+}
+
+function importCSV(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const lines = ev.target.result.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    const items = [];
+    lines.forEach((line, i) => {
+      const cols = line.split(",");
+      const name = cols[0].trim();
+      const color = (cols[1] || "").trim();
+      // skip header row if first column looks like a label
+      if (i === 0 && /^(name|フレーム|モデル)/i.test(name)) return;
+      if (name) items.push({ id: uid(), name, color, checked: false });
+    });
+    if (!items.length) { alert("CSVを読み込めませんでした。\n形式: フレーム名,カラー番号"); return; }
+    invItems = items; saveInv(); renderInventory();
+  };
+  reader.readAsText(file, "UTF-8");
+}
+
+// ---- CAMERA ----
+async function openCam() {
+  document.getElementById("camModal").style.display = "flex";
+  document.getElementById("camResult").textContent = "—";
+  document.getElementById("ocrLbl").textContent = "";
+  if (isTestMode) { startTestCanvas(); return; }
+  try {
+    camStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { ideal: "environment" }, width: { ideal: 1280 } }
+    });
+    const video = document.getElementById("camVideo");
+    video.style.display = "block";
+    document.getElementById("camCanvas").style.display = "none";
+    video.srcObject = camStream;
+  } catch {
+    document.getElementById("ocrLbl").textContent = "カメラ起動失敗 → TESTモードをお試しください";
+  }
+}
+
+function closeCam() {
+  if (camStream) { camStream.getTracks().forEach(t => t.stop()); camStream = null; }
+  document.getElementById("camModal").style.display = "none";
+  document.getElementById("camVideo").srcObject = null;
+}
+
+function toggleTestMode() {
+  isTestMode = !isTestMode;
+  document.getElementById("testSw").classList.toggle("on", isTestMode);
+  if (isTestMode) {
+    if (camStream) { camStream.getTracks().forEach(t => t.stop()); camStream = null; }
+    document.getElementById("camVideo").srcObject = null;
+    startTestCanvas();
+  } else {
+    document.getElementById("camCanvas").style.display = "none";
+    document.getElementById("camVideo").style.display = "block";
+    openCam();
+  }
+}
+
+function startTestCanvas() {
+  const video = document.getElementById("camVideo");
+  const canvas = document.getElementById("camCanvas");
+  video.style.display = "none";
+  canvas.style.display = "block";
+  const ctx = canvas.getContext("2d");
+  canvas.width = canvas.offsetWidth || 400;
+  canvas.height = canvas.offsetHeight || 300;
+  const f = TEST_FRAMES[testIdx % TEST_FRAMES.length];
+  ctx.fillStyle = "#1e1e1e"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+  const rx = canvas.width * 0.14, ry = canvas.height * 0.38;
+  const rw = canvas.width * 0.72, rh = canvas.height * 0.18;
+  ctx.fillStyle = "#4a4a4a"; ctx.fillRect(rx, ry, rw, rh);
+  ctx.fillStyle = "#e0e0e0";
+  ctx.font = `bold ${Math.round(rh * 0.45)}px monospace`;
+  ctx.textAlign = "center";
+  ctx.fillText(`${f.name}  ${f.color}`, canvas.width / 2, ry + rh * 0.65);
+  ctx.fillStyle = "rgba(255,255,255,0.25)"; ctx.font = "11px sans-serif";
+  ctx.fillText("[ TEST MODE ]", canvas.width / 2, canvas.height * 0.88);
+  document.getElementById("ocrLbl").textContent = "TEST";
+}
+
+async function captureFrame() {
+  const ocrLbl = document.getElementById("ocrLbl");
+  const result = document.getElementById("camResult");
+
+  if (isTestMode) {
+    const f = TEST_FRAMES[testIdx % TEST_FRAMES.length];
+    testIdx++;
+    const text = `${f.name} ${f.color}`;
+    result.textContent = `読み取り: ${text}`;
+    matchAndCheck(text);
+    startTestCanvas();
+    return;
+  }
+
+  const video = document.getElementById("camVideo");
+  const canvas = document.getElementById("camCanvas");
+  const guide = document.getElementById("camGuide");
+  const vp = guide.closest(".cam-viewport");
+  const vpRect = vp.getBoundingClientRect();
+  const gRect = guide.getBoundingClientRect();
+  const sx = video.videoWidth  / vpRect.width;
+  const sy = video.videoHeight / vpRect.height;
+  const cx = (gRect.left - vpRect.left) * sx;
+  const cy = (gRect.top  - vpRect.top)  * sy;
+  const cw = gRect.width  * sx;
+  const ch = gRect.height * sy;
+
+  canvas.width = cw; canvas.height = ch;
+  canvas.style.display = "none";
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(video, cx, cy, cw, ch, 0, 0, cw, ch);
+
+  ocrLbl.textContent = "読取中…"; result.textContent = "—";
+  try {
+    if (!tWorker) tWorker = await Tesseract.createWorker("eng");
+    const { data: { text } } = await tWorker.recognize(canvas);
+    const cleaned = text.replace(/\n/g, " ").replace(/\s+/g, " ").trim();
+    result.textContent = `読み取り: ${cleaned || "(認識不可)"}`;
+    ocrLbl.textContent = "";
+    if (cleaned) matchAndCheck(cleaned);
+  } catch {
+    ocrLbl.textContent = "OCRエラー";
+    result.innerHTML = `<span class="miss">読み取り失敗</span>`;
+  }
+}
+
+function matchAndCheck(text) {
+  const resultEl = document.getElementById("camResult");
+  if (!invItems.length) { resultEl.innerHTML = `<span class="miss">リストが空です</span>`; return; }
+  const up = text.toUpperCase();
+  let best = -1, bestScore = 0;
+  invItems.forEach((item, i) => {
+    let score = 0;
+    const nameUp = item.name.toUpperCase();
+    if (up.includes(nameUp)) score += 10;
+    else nameUp.split("").forEach(c => { if (up.includes(c)) score += 0.3; });
+    const colorWord = item.color.toUpperCase().split(/[\s-]/)[0];
+    if (colorWord && up.includes(colorWord)) score += 5;
+    if (score > bestScore) { bestScore = score; best = i; }
+  });
+  if (best >= 0 && bestScore >= 3) {
+    const item = invItems[best];
+    resultEl.innerHTML = `<span class="hit">一致: ${item.name} ${item.color}</span>`;
+    invItems[best].checked = true;
+    saveInv();
+    // 背景のリストを即時更新
+    document.querySelectorAll(".inv-item").forEach((el, i) => {
+      if (i === best) { el.classList.add("checked"); el.querySelector(".inv-check").classList.add("on"); }
+    });
+  } else {
+    resultEl.innerHTML = `<span class="miss">一致なし — 手動でチェックしてください</span>`;
+  }
+}
 document.getElementById("modalTitle").addEventListener("keydown", e => {
   if (e.key === "Enter") { e.preventDefault(); document.getElementById("modalDetail").focus(); }
 });
