@@ -1284,20 +1284,41 @@ function startTestCanvas() {
   const canvas = document.getElementById("camCanvas");
   video.style.display = "none";
   canvas.style.display = "block";
+
+  // 読み取り対象: invItemsがあればそこから、なければTEST_FRAMES
+  const src = invItems.length ? invItems : TEST_FRAMES.map(f => ({ name: f.name, color: f.color }));
+  const item = src[testIdx % src.length];
+
   const ctx = canvas.getContext("2d");
-  canvas.width = canvas.offsetWidth || 400;
+  canvas.width  = canvas.offsetWidth  || 400;
   canvas.height = canvas.offsetHeight || 300;
-  const f = TEST_FRAMES[testIdx % TEST_FRAMES.length];
-  ctx.fillStyle = "#1e1e1e"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-  const rx = canvas.width * 0.14, ry = canvas.height * 0.38;
-  const rw = canvas.width * 0.72, rh = canvas.height * 0.18;
-  ctx.fillStyle = "#4a4a4a"; ctx.fillRect(rx, ry, rw, rh);
-  ctx.fillStyle = "#e0e0e0";
-  ctx.font = `bold ${Math.round(rh * 0.45)}px monospace`;
+  const w = canvas.width, h = canvas.height;
+
+  // 白背景（OCRが読みやすい）
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, w, h);
+
+  // テンプル風のグレー帯
+  const bx = w * 0.08, by = h * 0.36, bw = w * 0.84, bh = h * 0.2;
+  ctx.fillStyle = "#d8d8d8";
+  ctx.fillRect(bx, by, bw, bh);
+
+  // フレーム名（大）+ カラー（小）を黒文字でOCR-friendly表示
+  const fontSize = Math.max(14, Math.round(bh * 0.44));
+  ctx.fillStyle = "#111111";
+  ctx.font = `bold ${fontSize}px Arial, sans-serif`;
   ctx.textAlign = "center";
-  ctx.fillText(`${f.name}  ${f.color}`, canvas.width / 2, ry + rh * 0.65);
-  ctx.fillStyle = "rgba(255,255,255,0.25)"; ctx.font = "11px sans-serif";
-  ctx.fillText("[ TEST MODE ]", canvas.width / 2, canvas.height * 0.88);
+  ctx.textBaseline = "middle";
+  const label = item.color ? `${item.name}  ${item.color}` : item.name;
+  ctx.fillText(label, w / 2, by + bh / 2);
+
+  // 下部: 番号表示
+  ctx.fillStyle = "#aaaaaa";
+  ctx.font = "11px Arial, sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "alphabetic";
+  ctx.fillText(`[ TEST ${(testIdx % src.length) + 1} / ${src.length} ]  シャッターで次のアイテムへ`, w / 2, h * 0.88);
+
   document.getElementById("ocrLbl").textContent = "TEST";
 }
 
