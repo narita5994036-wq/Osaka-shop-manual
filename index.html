@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MYKITA Osaka Shop Manual</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root { color-scheme: light only; }
@@ -536,6 +537,49 @@
   }
   .btn-add-morning:hover { color: #555; }
 
+  /* ---- INVENTORY ---- */
+  .inv-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:12px; }
+  .inv-progress { font-family:'Montserrat',sans-serif; font-size:12px; letter-spacing:0.1em; color:#555; }
+  .inv-progress strong { font-weight:600; color:#1a1a1a; }
+  .inv-actions { display:flex; gap:8px; align-items:center; }
+  .btn-inv { font-family:'Montserrat',sans-serif; font-size:10px; letter-spacing:0.12em; text-transform:uppercase; padding:8px 16px; cursor:pointer; border:1px solid #1a1a1a; background:none; color:#1a1a1a; }
+  .inv-list { border:1px solid #e0e0e0; }
+  .inv-item { display:flex; align-items:center; gap:14px; padding:14px 18px; border-bottom:1px solid #f0f0f0; background:white; transition:background 0.1s; }
+  .inv-item:last-child { border-bottom:none; }
+  .inv-item.checked { background:#f9f9f9; }
+  .inv-check { width:20px; height:20px; border:1.5px solid #ccc; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.15s; border-radius:2px; }
+  .inv-check.on { background:#1a1a1a; border-color:#1a1a1a; }
+  .inv-check.on::after { content:'✓'; color:white; font-size:12px; line-height:1; }
+  .inv-name { font-family:'Montserrat',sans-serif; font-weight:500; font-size:13px; letter-spacing:0.04em; color:#1a1a1a; flex:1; }
+  .inv-item.checked .inv-name { color:#bbb; text-decoration:line-through; }
+  .inv-color { font-family:'Montserrat',sans-serif; font-size:11px; letter-spacing:0.08em; color:#999; }
+  .btn-cam-fab { position:fixed; right:24px; bottom:32px; width:56px; height:56px; border-radius:50%; background:#1a1a1a; color:white; border:none; cursor:pointer; font-size:22px; z-index:100; box-shadow:0 4px 16px rgba(0,0,0,0.22); display:none; align-items:center; justify-content:center; }
+  .inv-empty { padding:48px 24px; text-align:center; color:#bbb; font-family:'Montserrat',sans-serif; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; border:1px solid #e0e0e0; }
+
+  /* ---- CAMERA MODAL ---- */
+  .cam-overlay { position:fixed; inset:0; background:#000; z-index:2000; display:flex; flex-direction:column; }
+  .cam-top { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; background:rgba(0,0,0,0.7); flex-shrink:0; }
+  .cam-top-title { font-family:'Montserrat',sans-serif; font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:white; }
+  .cam-top-close { background:none; border:none; color:white; font-size:24px; cursor:pointer; line-height:1; padding:0; }
+  .cam-viewport { flex:1; position:relative; overflow:hidden; }
+  #camVideo, #camCanvas { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  #camCanvas { display:none; }
+  .cam-guide-box { position:absolute; top:50%; left:50%; transform:translate(-50%,-60%); width:72%; max-width:340px; height:64px; border:2px solid rgba(255,255,255,0.9); border-radius:4px; pointer-events:none; box-shadow:0 0 0 9999px rgba(0,0,0,0.5); }
+  .cam-guide-box::after { content:'テンプルをここに合わせてください'; position:absolute; bottom:-26px; left:50%; transform:translateX(-50%); white-space:nowrap; color:rgba(255,255,255,0.85); font-family:'Montserrat',sans-serif; font-size:10px; letter-spacing:0.08em; }
+  .cam-bottom { background:rgba(0,0,0,0.75); padding:18px 20px 24px; display:flex; flex-direction:column; align-items:center; gap:14px; flex-shrink:0; }
+  .cam-result-txt { color:white; font-family:'Montserrat',sans-serif; font-size:12px; letter-spacing:0.06em; min-height:18px; text-align:center; }
+  .cam-result-txt .hit { color:#7dff9a; }
+  .cam-result-txt .miss { color:#ffb347; }
+  .cam-row { display:flex; align-items:center; gap:20px; }
+  .btn-shutter { width:64px; height:64px; border-radius:50%; background:white; border:4px solid rgba(255,255,255,0.35); cursor:pointer; flex-shrink:0; transition:transform 0.1s; }
+  .btn-shutter:active { transform:scale(0.9); }
+  .cam-test-row { display:flex; align-items:center; gap:10px; color:rgba(255,255,255,0.65); font-family:'Montserrat',sans-serif; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; }
+  .test-sw { width:38px; height:20px; background:rgba(255,255,255,0.2); border-radius:10px; cursor:pointer; position:relative; transition:background 0.2s; flex-shrink:0; }
+  .test-sw.on { background:#7dff9a; }
+  .test-sw::after { content:''; position:absolute; width:16px; height:16px; background:white; border-radius:50%; top:2px; left:2px; transition:transform 0.2s; }
+  .test-sw.on::after { transform:translateX(18px); }
+  .cam-ocr-lbl { color:rgba(255,255,255,0.45); font-family:'Montserrat',sans-serif; font-size:10px; letter-spacing:0.08em; min-width:80px; text-align:center; }
+
   /* ---- NAV OVERLAY ---- */
   .nav-overlay {
     display: none;
@@ -571,6 +615,33 @@
   </nav>
   <main id="mainContent"></main>
 </div>
+
+<!-- Camera Modal -->
+<div id="camModal" style="display:none;" class="cam-overlay">
+  <div class="cam-top">
+    <span class="cam-top-title">Frame Scanner</span>
+    <button class="cam-top-close" onclick="closeCam()">×</button>
+  </div>
+  <div class="cam-viewport">
+    <video id="camVideo" playsinline autoplay muted></video>
+    <canvas id="camCanvas"></canvas>
+    <div class="cam-guide-box" id="camGuide"></div>
+  </div>
+  <div class="cam-bottom">
+    <div class="cam-result-txt" id="camResult">—</div>
+    <div class="cam-row">
+      <div class="cam-test-row">
+        <div class="test-sw" id="testSw" onclick="toggleTestMode()"></div>
+        <span>TEST</span>
+      </div>
+      <button class="btn-shutter" id="btnShutter" onclick="captureFrame()"></button>
+      <div class="cam-ocr-lbl" id="ocrLbl"></div>
+    </div>
+  </div>
+</div>
+
+<!-- FAB camera button (shown only in inventory view) -->
+<button class="btn-cam-fab" id="camFab" onclick="openCam()">📷</button>
 
 <div class="modal-overlay" id="modal" style="display:none;">
   <div class="modal">
@@ -658,16 +729,6 @@ const DEFAULT_DATA = {
       ]
     },
     {
-      id: "open-close", title: "開店・閉店準備", subtitle: "Opening & Closing",
-      steps: [
-        { id: "oc1", title: "開店準備チェックリスト", detail: "店内清掃 → ディスプレイ整備 → レジ準備 → 在庫確認 → 照明ON → サイン表示。" },
-        { id: "oc2", title: "ディスプレイの整え", detail: "前日終了時の状態から、商品の向き・間隔を整える。欠品があれば補充。" },
-        { id: "oc3", title: "スタッフミーティング", detail: "当日の予約確認 → 前日の引き継ぎ事項共有 → 目標・注意事項の確認。" },
-        { id: "oc4", title: "閉店前の在庫確認", detail: "陳列商品の数を確認。不足品・破損品のチェックと記録。翌日の発注確認。" },
-        { id: "oc5", title: "閉店作業", detail: "清掃 → レジ締め → セキュリティ設定 → 消灯確認 → 施錠。" },
-      ]
-    },
-    {
       id: "evening", title: "遅番・閉店作業", subtitle: "Evening Closing",
       steps: [
         { id: "ev1", title: "日報下書き（18:30〜）", detail: "PCのテキストエディットに下書きを作成する。\nフレーム合計本数は最後に書く人が修正する。" },
@@ -693,12 +754,16 @@ const DEFAULT_DATA = {
         { id: "st3", title: "営業", detail: "ヒジカタ\nコウノ\nカワニシ" },
       ]
     },
+    {
+      id: "inventory", title: "棚卸", subtitle: "Frame Inventory",
+      steps: []
+    },
   ]
 };
 
-const NUMS = { "morning":"01","register":"02","register-help":"03","eye-exam":"04","shipping":"05","daytime":"06","open-close":"07","evening":"08","staff":"09" };
+const NUMS = { "morning":"01","register":"02","register-help":"03","eye-exam":"04","shipping":"05","daytime":"06","evening":"07","staff":"08","inventory":"09" };
 
-let data = (() => { try { const s = localStorage.getItem("mykita-manual-v8"); return s ? JSON.parse(s) : DEFAULT_DATA; } catch { return DEFAULT_DATA; } })();
+let data = (() => { try { const s = localStorage.getItem("mykita-manual-v10"); return s ? JSON.parse(s) : DEFAULT_DATA; } catch { return DEFAULT_DATA; } })();
 let activeId = "morning";
 let isEditMode = false;
 let learnIndex = null;
@@ -706,7 +771,7 @@ let dragSrcIdx = null;
 let modalMode = null;
 let editingStepId = null;
 
-function save() { localStorage.setItem("mykita-manual-v8", JSON.stringify(data)); }
+function save() { localStorage.setItem("mykita-manual-v10", JSON.stringify(data)); }
 function topic() { return data.topics.find(t => t.id === activeId); }
 function uid() { return "s" + Date.now() + Math.random().toString(36).slice(2,6); }
 function esc(s) {
@@ -745,6 +810,12 @@ function renderNav() {
 
 function renderMain() {
   const t = topic();
+  const fab = document.getElementById("camFab");
+  if (t.id === "inventory") {
+    fab.style.display = "flex";
+    renderInventory(); return;
+  }
+  fab.style.display = "none";
   const main = document.getElementById("mainContent");
 
   let learnHtml = "";
@@ -1080,6 +1151,229 @@ function saveStep() {
 }
 
 document.getElementById("modal").addEventListener("click", function(e) { if (e.target === this) closeModal(); });
+
+// ============================================================
+// INVENTORY (棚卸)
+// ============================================================
+let invItems = [];
+let camStream = null;
+let tWorker = null;
+let isTestMode = false;
+let testIdx = 0;
+const TEST_FRAMES = [
+  { name: "MODELO", color: "C-12 Black" },
+  { name: "MYLON",  color: "C-23 Silver" },
+  { name: "VIVID",  color: "C-40 Gold" },
+];
+
+function loadInv() {
+  try { const s = localStorage.getItem("mykita-inv"); if (s) invItems = JSON.parse(s); } catch {}
+}
+function saveInv() { localStorage.setItem("mykita-inv", JSON.stringify(invItems)); }
+
+function renderInventory() {
+  loadInv();
+  const main = document.getElementById("mainContent");
+  const done = invItems.filter(x => x.checked).length;
+  const total = invItems.length;
+  const pct = total ? Math.round(done / total * 100) : 0;
+
+  const listHtml = total === 0
+    ? `<div class="inv-empty">CSVをインポートしてリストを作成してください</div>`
+    : `<div class="inv-list">${invItems.map((item, i) => `
+        <div class="inv-item ${item.checked ? 'checked' : ''}">
+          <div class="inv-check ${item.checked ? 'on' : ''}" onclick="toggleInvItem(${i})"></div>
+          <div class="inv-name">${esc(item.name)}</div>
+          <div class="inv-color">${esc(item.color)}</div>
+        </div>`).join('')}</div>`;
+
+  main.innerHTML = `
+    <div class="topic-header">
+      <div>
+        <div class="topic-eyebrow">09 — Frame Inventory</div>
+        <h1 class="topic-title">棚卸</h1>
+      </div>
+    </div>
+    <div class="inv-header">
+      <div class="inv-progress">
+        <strong>${done}</strong> / <strong>${total}</strong> 確認済み
+        ${total ? `<span style="color:#bbb;margin-left:10px">${pct}%</span>` : ''}
+      </div>
+      <div class="inv-actions">
+        <label class="btn-inv" style="cursor:pointer">CSV 読み込み
+          <input type="file" accept=".csv,.txt" style="display:none" onchange="importCSV(event)">
+        </label>
+        ${total ? `<button class="btn-inv" onclick="resetInv()">リセット</button>` : ''}
+      </div>
+    </div>
+    ${listHtml}`;
+}
+
+function toggleInvItem(i) {
+  invItems[i].checked = !invItems[i].checked;
+  saveInv(); renderInventory();
+}
+
+function resetInv() {
+  if (!confirm("チェックをすべてリセットしますか？")) return;
+  invItems.forEach(x => x.checked = false);
+  saveInv(); renderInventory();
+}
+
+function importCSV(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const lines = ev.target.result.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    const items = [];
+    lines.forEach((line, i) => {
+      const cols = line.split(",");
+      const name = cols[0].trim();
+      const color = (cols[1] || "").trim();
+      // skip header row if first column looks like a label
+      if (i === 0 && /^(name|フレーム|モデル)/i.test(name)) return;
+      if (name) items.push({ id: uid(), name, color, checked: false });
+    });
+    if (!items.length) { alert("CSVを読み込めませんでした。\n形式: フレーム名,カラー番号"); return; }
+    invItems = items; saveInv(); renderInventory();
+  };
+  reader.readAsText(file, "UTF-8");
+}
+
+// ---- CAMERA ----
+async function openCam() {
+  document.getElementById("camModal").style.display = "flex";
+  document.getElementById("camResult").textContent = "—";
+  document.getElementById("ocrLbl").textContent = "";
+  if (isTestMode) { startTestCanvas(); return; }
+  try {
+    camStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { ideal: "environment" }, width: { ideal: 1280 } }
+    });
+    const video = document.getElementById("camVideo");
+    video.style.display = "block";
+    document.getElementById("camCanvas").style.display = "none";
+    video.srcObject = camStream;
+  } catch {
+    document.getElementById("ocrLbl").textContent = "カメラ起動失敗 → TESTモードをお試しください";
+  }
+}
+
+function closeCam() {
+  if (camStream) { camStream.getTracks().forEach(t => t.stop()); camStream = null; }
+  document.getElementById("camModal").style.display = "none";
+  document.getElementById("camVideo").srcObject = null;
+}
+
+function toggleTestMode() {
+  isTestMode = !isTestMode;
+  document.getElementById("testSw").classList.toggle("on", isTestMode);
+  if (isTestMode) {
+    if (camStream) { camStream.getTracks().forEach(t => t.stop()); camStream = null; }
+    document.getElementById("camVideo").srcObject = null;
+    startTestCanvas();
+  } else {
+    document.getElementById("camCanvas").style.display = "none";
+    document.getElementById("camVideo").style.display = "block";
+    openCam();
+  }
+}
+
+function startTestCanvas() {
+  const video = document.getElementById("camVideo");
+  const canvas = document.getElementById("camCanvas");
+  video.style.display = "none";
+  canvas.style.display = "block";
+  const ctx = canvas.getContext("2d");
+  canvas.width = canvas.offsetWidth || 400;
+  canvas.height = canvas.offsetHeight || 300;
+  const f = TEST_FRAMES[testIdx % TEST_FRAMES.length];
+  ctx.fillStyle = "#1e1e1e"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+  const rx = canvas.width * 0.14, ry = canvas.height * 0.38;
+  const rw = canvas.width * 0.72, rh = canvas.height * 0.18;
+  ctx.fillStyle = "#4a4a4a"; ctx.fillRect(rx, ry, rw, rh);
+  ctx.fillStyle = "#e0e0e0";
+  ctx.font = `bold ${Math.round(rh * 0.45)}px monospace`;
+  ctx.textAlign = "center";
+  ctx.fillText(`${f.name}  ${f.color}`, canvas.width / 2, ry + rh * 0.65);
+  ctx.fillStyle = "rgba(255,255,255,0.25)"; ctx.font = "11px sans-serif";
+  ctx.fillText("[ TEST MODE ]", canvas.width / 2, canvas.height * 0.88);
+  document.getElementById("ocrLbl").textContent = "TEST";
+}
+
+async function captureFrame() {
+  const ocrLbl = document.getElementById("ocrLbl");
+  const result = document.getElementById("camResult");
+
+  if (isTestMode) {
+    const f = TEST_FRAMES[testIdx % TEST_FRAMES.length];
+    testIdx++;
+    const text = `${f.name} ${f.color}`;
+    result.textContent = `読み取り: ${text}`;
+    matchAndCheck(text);
+    startTestCanvas();
+    return;
+  }
+
+  const video = document.getElementById("camVideo");
+  const canvas = document.getElementById("camCanvas");
+  const guide = document.getElementById("camGuide");
+  const vp = guide.closest(".cam-viewport");
+  const vpRect = vp.getBoundingClientRect();
+  const gRect = guide.getBoundingClientRect();
+  const sx = video.videoWidth  / vpRect.width;
+  const sy = video.videoHeight / vpRect.height;
+  const cx = (gRect.left - vpRect.left) * sx;
+  const cy = (gRect.top  - vpRect.top)  * sy;
+  const cw = gRect.width  * sx;
+  const ch = gRect.height * sy;
+
+  canvas.width = cw; canvas.height = ch;
+  canvas.style.display = "none";
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(video, cx, cy, cw, ch, 0, 0, cw, ch);
+
+  ocrLbl.textContent = "読取中…"; result.textContent = "—";
+  try {
+    if (!tWorker) tWorker = await Tesseract.createWorker("eng");
+    const { data: { text } } = await tWorker.recognize(canvas);
+    const cleaned = text.replace(/\n/g, " ").replace(/\s+/g, " ").trim();
+    result.textContent = `読み取り: ${cleaned || "(認識不可)"}`;
+    ocrLbl.textContent = "";
+    if (cleaned) matchAndCheck(cleaned);
+  } catch {
+    ocrLbl.textContent = "OCRエラー";
+    result.innerHTML = `<span class="miss">読み取り失敗</span>`;
+  }
+}
+
+function matchAndCheck(text) {
+  const resultEl = document.getElementById("camResult");
+  if (!invItems.length) { resultEl.innerHTML = `<span class="miss">リストが空です</span>`; return; }
+  const up = text.toUpperCase();
+  let best = -1, bestScore = 0;
+  invItems.forEach((item, i) => {
+    let score = 0;
+    const nameUp = item.name.toUpperCase();
+    if (up.includes(nameUp)) score += 10;
+    else nameUp.split("").forEach(c => { if (up.includes(c)) score += 0.3; });
+    const colorWord = item.color.toUpperCase().split(/[\s-]/)[0];
+    if (colorWord && up.includes(colorWord)) score += 5;
+    if (score > bestScore) { bestScore = score; best = i; }
+  });
+  if (best >= 0 && bestScore >= 3) {
+    const item = invItems[best];
+    resultEl.innerHTML = `<span class="hit">一致: ${item.name} ${item.color}</span>`;
+    invItems[best].checked = true;
+    saveInv();
+    // 背景のリストを即時更新
+    document.querySelectorAll(".inv-item").forEach((el, i) => {
+      if (i === best) { el.classList.add("checked"); el.querySelector(".inv-check").classList.add("on"); }
+    });
+  } else {
+    resultEl.innerHTML = `<span class="miss">一致なし — 手動でチェックしてください</span>`;
+  }
+}
 document.getElementById("modalTitle").addEventListener("keydown", e => {
   if (e.key === "Enter") { e.preventDefault(); document.getElementById("modalDetail").focus(); }
 });
