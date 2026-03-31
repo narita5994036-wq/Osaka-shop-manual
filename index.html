@@ -565,7 +565,7 @@
   #camVideo, #camCanvas { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
   #camCanvas { display:none; }
   .cam-guide-box { position:absolute; top:50%; left:50%; transform:translate(-50%,-60%); width:72%; max-width:340px; height:64px; border:2px solid rgba(255,255,255,0.9); border-radius:4px; pointer-events:none; box-shadow:0 0 0 9999px rgba(0,0,0,0.5); }
-  .cam-guide-box::after { content:'テンプルをここに合わせてください'; position:absolute; bottom:-26px; left:50%; transform:translateX(-50%); white-space:nowrap; color:rgba(255,255,255,0.85); font-family:'Montserrat',sans-serif; font-size:10px; letter-spacing:0.08em; }
+  .cam-guide-box::after { content:'右テンプルをここに合わせてください'; position:absolute; bottom:-26px; left:50%; transform:translateX(-50%); white-space:nowrap; color:rgba(255,255,255,0.85); font-family:'Montserrat',sans-serif; font-size:10px; letter-spacing:0.08em; }
   .cam-bottom { background:rgba(0,0,0,0.75); padding:18px 20px 24px; display:flex; flex-direction:column; align-items:center; gap:14px; flex-shrink:0; }
   .cam-result-txt { color:white; font-family:'Montserrat',sans-serif; font-size:12px; letter-spacing:0.06em; min-height:18px; text-align:center; }
   .cam-result-txt .hit { color:#7dff9a; }
@@ -1284,20 +1284,41 @@ function startTestCanvas() {
   const canvas = document.getElementById("camCanvas");
   video.style.display = "none";
   canvas.style.display = "block";
+
+  // 読み取り対象: invItemsがあればそこから、なければTEST_FRAMES
+  const src = invItems.length ? invItems : TEST_FRAMES.map(f => ({ name: f.name, color: f.color }));
+  const item = src[testIdx % src.length];
+
   const ctx = canvas.getContext("2d");
-  canvas.width = canvas.offsetWidth || 400;
+  canvas.width  = canvas.offsetWidth  || 400;
   canvas.height = canvas.offsetHeight || 300;
-  const f = TEST_FRAMES[testIdx % TEST_FRAMES.length];
-  ctx.fillStyle = "#1e1e1e"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-  const rx = canvas.width * 0.14, ry = canvas.height * 0.38;
-  const rw = canvas.width * 0.72, rh = canvas.height * 0.18;
-  ctx.fillStyle = "#4a4a4a"; ctx.fillRect(rx, ry, rw, rh);
-  ctx.fillStyle = "#e0e0e0";
-  ctx.font = `bold ${Math.round(rh * 0.45)}px monospace`;
+  const w = canvas.width, h = canvas.height;
+
+  // 白背景（OCRが読みやすい）
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, w, h);
+
+  // テンプル風のグレー帯
+  const bx = w * 0.08, by = h * 0.36, bw = w * 0.84, bh = h * 0.2;
+  ctx.fillStyle = "#d8d8d8";
+  ctx.fillRect(bx, by, bw, bh);
+
+  // フレーム名（大）+ カラー（小）を黒文字でOCR-friendly表示
+  const fontSize = Math.max(14, Math.round(bh * 0.44));
+  ctx.fillStyle = "#111111";
+  ctx.font = `bold ${fontSize}px Arial, sans-serif`;
   ctx.textAlign = "center";
-  ctx.fillText(`${f.name}  ${f.color}`, canvas.width / 2, ry + rh * 0.65);
-  ctx.fillStyle = "rgba(255,255,255,0.25)"; ctx.font = "11px sans-serif";
-  ctx.fillText("[ TEST MODE ]", canvas.width / 2, canvas.height * 0.88);
+  ctx.textBaseline = "middle";
+  const label = item.color ? `${item.name}  ${item.color}` : item.name;
+  ctx.fillText(label, w / 2, by + bh / 2);
+
+  // 下部: 番号表示
+  ctx.fillStyle = "#aaaaaa";
+  ctx.font = "11px Arial, sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "alphabetic";
+  ctx.fillText(`[ TEST ${(testIdx % src.length) + 1} / ${src.length} ]  シャッターで次のアイテムへ`, w / 2, h * 0.88);
+
   document.getElementById("ocrLbl").textContent = "TEST";
 }
 
@@ -1306,11 +1327,21 @@ async function captureFrame() {
   const result = document.getElementById("camResult");
 
   if (isTestMode) {
-    const f = TEST_FRAMES[testIdx % TEST_FRAMES.length];
+    // キャンバスに描かれたテキストを実際にOCRで読み取る
+    const canvas = document.getElementById("camCanvas");
+    ocrLbl.textContent = "読取中…"; result.textContent = "—";
     testIdx++;
-    const text = `${f.name} ${f.color}`;
-    result.textContent = `読み取り: ${text}`;
-    matchAndCheck(text);
+    try {
+      if (!tWorker) tWorker = await Tesseract.createWorker("eng");
+      const { data: { text } } = await tWorker.recognize(canvas);
+      const cleaned = text.replace(/\n/g, " ").replace(/\s+/g, " ").trim();
+      result.textContent = `読み取り: ${cleaned || "(認識不可)"}`;
+      ocrLbl.textContent = "";
+      if (cleaned) matchAndCheck(cleaned);
+    } catch {
+      ocrLbl.textContent = "OCRエラー";
+      result.innerHTML = `<span class="miss">読み取り失敗</span>`;
+    }
     startTestCanvas();
     return;
   }
