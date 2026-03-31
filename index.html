@@ -537,6 +537,49 @@
   }
   .btn-add-morning:hover { color: #555; }
 
+  /* ---- INVENTORY ---- */
+  .inv-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:12px; }
+  .inv-progress { font-family:'Montserrat',sans-serif; font-size:12px; letter-spacing:0.1em; color:#555; }
+  .inv-progress strong { font-weight:600; color:#1a1a1a; }
+  .inv-actions { display:flex; gap:8px; align-items:center; }
+  .btn-inv { font-family:'Montserrat',sans-serif; font-size:10px; letter-spacing:0.12em; text-transform:uppercase; padding:8px 16px; cursor:pointer; border:1px solid #1a1a1a; background:none; color:#1a1a1a; }
+  .inv-list { border:1px solid #e0e0e0; }
+  .inv-item { display:flex; align-items:center; gap:14px; padding:14px 18px; border-bottom:1px solid #f0f0f0; background:white; transition:background 0.1s; }
+  .inv-item:last-child { border-bottom:none; }
+  .inv-item.checked { background:#f9f9f9; }
+  .inv-check { width:20px; height:20px; border:1.5px solid #ccc; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.15s; border-radius:2px; }
+  .inv-check.on { background:#1a1a1a; border-color:#1a1a1a; }
+  .inv-check.on::after { content:'✓'; color:white; font-size:12px; line-height:1; }
+  .inv-name { font-family:'Montserrat',sans-serif; font-weight:500; font-size:13px; letter-spacing:0.04em; color:#1a1a1a; flex:1; }
+  .inv-item.checked .inv-name { color:#bbb; text-decoration:line-through; }
+  .inv-color { font-family:'Montserrat',sans-serif; font-size:11px; letter-spacing:0.08em; color:#999; }
+  .btn-cam-fab { position:fixed; right:24px; bottom:32px; width:56px; height:56px; border-radius:50%; background:#1a1a1a; color:white; border:none; cursor:pointer; font-size:22px; z-index:100; box-shadow:0 4px 16px rgba(0,0,0,0.22); display:none; align-items:center; justify-content:center; }
+  .inv-empty { padding:48px 24px; text-align:center; color:#bbb; font-family:'Montserrat',sans-serif; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; border:1px solid #e0e0e0; }
+
+  /* ---- CAMERA MODAL ---- */
+  .cam-overlay { position:fixed; inset:0; background:#000; z-index:2000; display:flex; flex-direction:column; }
+  .cam-top { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; background:rgba(0,0,0,0.7); flex-shrink:0; }
+  .cam-top-title { font-family:'Montserrat',sans-serif; font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:white; }
+  .cam-top-close { background:none; border:none; color:white; font-size:24px; cursor:pointer; line-height:1; padding:0; }
+  .cam-viewport { flex:1; position:relative; overflow:hidden; }
+  #camVideo, #camCanvas { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  #camCanvas { display:none; }
+  .cam-guide-box { position:absolute; top:50%; left:50%; transform:translate(-50%,-60%); width:72%; max-width:340px; height:64px; border:2px solid rgba(255,255,255,0.9); border-radius:4px; pointer-events:none; box-shadow:0 0 0 9999px rgba(0,0,0,0.5); }
+  .cam-guide-box::after { content:'テンプルをここに合わせてください'; position:absolute; bottom:-26px; left:50%; transform:translateX(-50%); white-space:nowrap; color:rgba(255,255,255,0.85); font-family:'Montserrat',sans-serif; font-size:10px; letter-spacing:0.08em; }
+  .cam-bottom { background:rgba(0,0,0,0.75); padding:18px 20px 24px; display:flex; flex-direction:column; align-items:center; gap:14px; flex-shrink:0; }
+  .cam-result-txt { color:white; font-family:'Montserrat',sans-serif; font-size:12px; letter-spacing:0.06em; min-height:18px; text-align:center; }
+  .cam-result-txt .hit { color:#7dff9a; }
+  .cam-result-txt .miss { color:#ffb347; }
+  .cam-row { display:flex; align-items:center; gap:20px; }
+  .btn-shutter { width:64px; height:64px; border-radius:50%; background:white; border:4px solid rgba(255,255,255,0.35); cursor:pointer; flex-shrink:0; transition:transform 0.1s; }
+  .btn-shutter:active { transform:scale(0.9); }
+  .cam-test-row { display:flex; align-items:center; gap:10px; color:rgba(255,255,255,0.65); font-family:'Montserrat',sans-serif; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; }
+  .test-sw { width:38px; height:20px; background:rgba(255,255,255,0.2); border-radius:10px; cursor:pointer; position:relative; transition:background 0.2s; flex-shrink:0; }
+  .test-sw.on { background:#7dff9a; }
+  .test-sw::after { content:''; position:absolute; width:16px; height:16px; background:white; border-radius:50%; top:2px; left:2px; transition:transform 0.2s; }
+  .test-sw.on::after { transform:translateX(18px); }
+  .cam-ocr-lbl { color:rgba(255,255,255,0.45); font-family:'Montserrat',sans-serif; font-size:10px; letter-spacing:0.08em; min-width:80px; text-align:center; }
+
   /* ---- NAV OVERLAY ---- */
   .nav-overlay {
     display: none;
