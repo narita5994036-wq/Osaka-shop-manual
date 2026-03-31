@@ -1327,11 +1327,21 @@ async function captureFrame() {
   const result = document.getElementById("camResult");
 
   if (isTestMode) {
-    const f = TEST_FRAMES[testIdx % TEST_FRAMES.length];
+    // キャンバスに描かれたテキストを実際にOCRで読み取る
+    const canvas = document.getElementById("camCanvas");
+    ocrLbl.textContent = "読取中…"; result.textContent = "—";
     testIdx++;
-    const text = `${f.name} ${f.color}`;
-    result.textContent = `読み取り: ${text}`;
-    matchAndCheck(text);
+    try {
+      if (!tWorker) tWorker = await Tesseract.createWorker("eng");
+      const { data: { text } } = await tWorker.recognize(canvas);
+      const cleaned = text.replace(/\n/g, " ").replace(/\s+/g, " ").trim();
+      result.textContent = `読み取り: ${cleaned || "(認識不可)"}`;
+      ocrLbl.textContent = "";
+      if (cleaned) matchAndCheck(cleaned);
+    } catch {
+      ocrLbl.textContent = "OCRエラー";
+      result.innerHTML = `<span class="miss">読み取り失敗</span>`;
+    }
     startTestCanvas();
     return;
   }
