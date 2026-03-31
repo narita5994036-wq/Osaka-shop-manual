@@ -1380,7 +1380,18 @@ async function captureFrame() {
 
 function matchAndCheck(text) {
   const resultEl = document.getElementById("camResult");
-  if (!invItems.length) { resultEl.innerHTML = `<span class="miss">リストが空です</span>`; return; }
+  // リストが空なら読み取ったテキストを新規アイテムとして追加
+  if (!invItems.length) {
+    const parts = text.trim().split(/\s{2,}|\t/);
+    const name  = parts[0].trim();
+    const color = parts.slice(1).join(" ").trim();
+    if (!name) { resultEl.innerHTML = `<span class="miss">テキストを認識できませんでした</span>`; return; }
+    invItems.push({ id: uid(), name, color, checked: true });
+    saveInv();
+    resultEl.innerHTML = `<span class="hit">追加: ${name}${color ? "  " + color : ""}</span>`;
+    if (activeId === "inventory") renderInventory();
+    return;
+  }
   const up = text.toUpperCase();
   let best = -1, bestScore = 0;
   invItems.forEach((item, i) => {
@@ -1402,8 +1413,21 @@ function matchAndCheck(text) {
       if (i === best) { el.classList.add("checked"); el.querySelector(".inv-check").classList.add("on"); }
     });
   } else {
-    resultEl.innerHTML = `<span class="miss">一致なし — 手動でチェックしてください</span>`;
+    // 一致なし → 新規アイテムとして追加するか確認
+    resultEl.innerHTML = `<span class="miss">一致なし — <button onclick="addScannedItem('${text.replace(/'/g,"\\'")}',this)" style="background:none;border:1px solid #ffb347;color:#ffb347;font-size:11px;padding:2px 8px;cursor:pointer;margin-left:6px;">リストに追加</button></span>`;
   }
+}
+
+function addScannedItem(text, btn) {
+  const parts = text.trim().split(/\s{2,}|\t/);
+  const name  = parts[0].trim();
+  const color = parts.slice(1).join(" ").trim();
+  if (!name) return;
+  invItems.push({ id: uid(), name, color, checked: true });
+  saveInv();
+  const resultEl = document.getElementById("camResult");
+  resultEl.innerHTML = `<span class="hit">追加: ${name}${color ? "  " + color : ""}</span>`;
+  if (activeId === "inventory") renderInventory();
 }
 document.getElementById("modalTitle").addEventListener("keydown", e => {
   if (e.key === "Enter") { e.preventDefault(); document.getElementById("modalDetail").focus(); }
