@@ -871,6 +871,8 @@ function renderMain() {
         ${learnIndex!==null ? '× Exit' : '▷ Learn'}
        </button>` : "";
 
+  const extraHtml = t.id === "daytime" ? renderDaytimeTemplate() : "";
+
   main.innerHTML = `
     <div class="topic-header">
       <div>
@@ -881,7 +883,8 @@ function renderMain() {
     </div>
     ${learnHtml}
     ${editHint}
-    ${stepsHtml}`;
+    ${stepsHtml}
+    ${extraHtml}`;
 
   attachDrag();
 }
