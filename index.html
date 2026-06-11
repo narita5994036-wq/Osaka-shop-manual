@@ -1447,6 +1447,110 @@ function addScannedItem(text, btn) {
   resultEl.innerHTML = `<span class="hit">追加: ${name}${color ? "  " + color : ""}</span>`;
   if (activeId === "inventory") renderInventory();
 }
+
+/* ---- DAYTIME: 完成連絡フレーズテンプレート ---- */
+const TPL_STAFF = ["成田","尾谷","平谷","正田"];
+
+function renderDaytimeTemplate() {
+  return `
+    <div class="tpl-section">
+      <div class="tpl-eyebrow">PHRASE TEMPLATE</div>
+      <div class="tpl-title">眼鏡の完成連絡（TEL/メッセージ）</div>
+      <div class="tpl-type-row">
+        <label class="tpl-radio"><input type="radio" name="tplType" value="visit" checked onchange="onTplTypeChange()"> 完成連絡（来店）</label>
+        <label class="tpl-radio"><input type="radio" name="tplType" value="ship" onchange="onTplTypeChange()"> 完成連絡（発送）</label>
+      </div>
+      <div class="field">
+        <label class="field-label">お客様名</label>
+        <input type="text" id="tplName" placeholder="例：山田">
+      </div>
+      <div class="field">
+        <label class="field-label">担当者</label>
+        <select id="tplStaff">
+          ${TPL_STAFF.map(s => `<option value="${esc(s)}">${esc(s)}</option>`).join("")}
+        </select>
+      </div>
+      <div class="field" id="tplTrackNoField" style="display:none">
+        <label class="field-label">追跡番号</label>
+        <input type="text" id="tplTrackNo" placeholder="例：1234-5678-9012">
+      </div>
+      <div class="field" id="tplTrackUrlField" style="display:none">
+        <label class="field-label">追跡ページのURL</label>
+        <input type="text" id="tplTrackUrl" placeholder="https://...">
+      </div>
+      <div class="tpl-actions">
+        <button class="btn-inv" onclick="generateTpl()">本文を生成</button>
+        <button class="btn-inv" onclick="copyTpl(this)">コピー</button>
+      </div>
+      <div class="field">
+        <label class="field-label">生成結果</label>
+        <textarea id="tplOutput" class="tpl-output" rows="14" readonly placeholder="「本文を生成」を押すとここに表示されます"></textarea>
+      </div>
+    </div>`;
+}
+
+function onTplTypeChange() {
+  const isShip = document.querySelector('input[name="tplType"]:checked').value === "ship";
+  document.getElementById("tplTrackNoField").style.display = isShip ? "block" : "none";
+  document.getElementById("tplTrackUrlField").style.display = isShip ? "block" : "none";
+}
+
+function generateTpl() {
+  const type = document.querySelector('input[name="tplType"]:checked').value;
+  const name = document.getElementById("tplName").value.trim() || "○○";
+  const staff = document.getElementById("tplStaff").value;
+  let body;
+  if (type === "visit") {
+    body = `${name} 様
+
+先日はご来店いただき、誠にありがとうございました。
+MYKITA Osakaの${staff}と申します。
+
+ご注文頂きました眼鏡が完成致しましたので、ご連絡させていただきました。
+ご都合のよろしい日程で構いませんので、ご来店の方よろしくお願いいたします。
+
+当日はお気をつけてお越しくださいませ。
+
+${staff}
+MYKITA Osaka`;
+  } else {
+    const trackNo = document.getElementById("tplTrackNo").value.trim() || "（追跡番号）";
+    const trackUrl = document.getElementById("tplTrackUrl").value.trim() || "（追跡ページのURL）";
+    body = `${name} 様
+
+本日、佐川急便にてご注文いただきました商品をご希望の住所に発送いたしました。
+下記の通り、お荷物のお問い合わせ番号をご案内申し上げます。
+
+【お問い合わせ送り状No.】
+佐川急便お荷物追跡ページ：${trackNo}
+${trackUrl}
+
+お手数をおかけいたしますが、受け取りのほどよろしくお願いいたします。
+この度はご注文を賜り、誠にありがとうございました。
+
+今後ともどうぞよろしくお願い申し上げます。
+
+${staff}
+MYKITA Osaka`;
+  }
+  document.getElementById("tplOutput").value = body;
+}
+
+function copyTpl(btn) {
+  const out = document.getElementById("tplOutput");
+  if (!out.value.trim()) generateTpl();
+  out.select();
+  const done = () => {
+    const orig = btn.textContent;
+    btn.textContent = "コピーしました ✓";
+    setTimeout(() => { btn.textContent = orig; }, 1500);
+  };
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(out.value).then(done).catch(() => { document.execCommand("copy"); done(); });
+  } else {
+    document.execCommand("copy"); done();
+  }
+}
 document.getElementById("modalTitle").addEventListener("keydown", e => {
   if (e.key === "Enter") { e.preventDefault(); document.getElementById("modalDetail").focus(); }
 });
